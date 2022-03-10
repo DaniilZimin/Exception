@@ -2,56 +2,82 @@ package com.skypro.Exception.service;
 
 import com.skypro.Exception.exception.AddingAnExistingEmployeeException;
 import com.skypro.Exception.exception.EmployeeNotFoundException;
-import com.skypro.Exception.exception.TheArrayEmployeesIsFullException;
 import org.springframework.stereotype.Service;
+
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
-    Employee[] employees = new Employee[10];
-
+    private final Map<String, Employee> employees = new HashMap<>();
 
     @Override
-    public Employee add(String firstName, String lastName) {
-        Employee newEmployee = new Employee(firstName, lastName);
+    public List<Employee> getAll() {
+        return employees.values().stream()
+                .sorted(Comparator.comparing(Employee::getDepartment))
+                .collect(Collectors.toList());
+    }
 
-        for (Employee employee : employees) {
-            if (employee != null && employee.equals(newEmployee)) {
-                throw new AddingAnExistingEmployeeException();
-            }
-        }
-
-        for (int i = 0; i < employees.length; i++) {
-            if (employees[i] == null) {
-                employees[i] = newEmployee;
-                return employees[i];
-            }
-        }
-        throw new TheArrayEmployeesIsFullException();
+    //Второй вариант
+    @Override
+    public Map<Integer, List<Employee>> getAllGroupedByDepartment() {
+        return employees.values().stream()
+                .collect(Collectors.groupingBy(Employee::getDepartment));
     }
 
     @Override
-    public Employee remove(String firstName, String lastName) {
-        Employee newEmployee = new Employee(firstName, lastName);
-
-        for (int i = 0; i < employees.length; i++) {
-            if (employees[i] != null && employees[i].equals(newEmployee)) {
-                Employee e = employees[i];
-                employees[i] = null;
-                return e;
-            }
-        }
-        throw new EmployeeNotFoundException();
+    public List<Employee> getEmployeesByDepartment(int department) {
+        return getEmployeeStreamByDepartment(department)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Employee find(String firstName, String lastName) {
-        Employee newEmployee = new Employee(firstName, lastName);
+    public Employee getMinSalaryEmployee(int department) {
+        return getEmployeeStreamByDepartment(department)
+                .min(Comparator.comparingDouble(Employee::getSalary))
+                .orElseThrow(EmployeeNotFoundException::new);
+    }
 
-        for (Employee employee : employees) {
-            if (employee != null && employee.equals(newEmployee)) {
-                return employee;
-            }
+    @Override
+    public Employee getMaxSalaryEmployee(int department) {
+        return getEmployeeStreamByDepartment(department)
+                .max(Comparator.comparingDouble(Employee::getSalary))
+                .orElseThrow(EmployeeNotFoundException::new);
+    }
+
+    private Stream<Employee> getEmployeeStreamByDepartment(int department) {
+        return employees.values().stream()
+                .filter(employee -> employee.getDepartment() == department);
+    }
+
+    @Override
+    public Employee add(String firstName, String lastName, int department, double salary) {
+        Employee newEmployee = new Employee(firstName, lastName, department, salary);
+        if (employees.containsKey(newEmployee.getFullName())) {
+            throw new AddingAnExistingEmployeeException();
         }
-        throw new EmployeeNotFoundException();
+        return employees.put(newEmployee.getFullName(), newEmployee);
+    }
+
+    @Override
+    public Employee remove(String fullName) {
+        Employee employee = employees.remove(fullName);
+        if (employee == null) {
+            throw new EmployeeNotFoundException();
+        }
+        return employee;
+    }
+
+    @Override
+    public Employee find(String fullName) {
+        Employee employee = employees.get(fullName);
+        if (employee == null) {
+            throw new EmployeeNotFoundException();
+        }
+        return employee;
     }
 }
