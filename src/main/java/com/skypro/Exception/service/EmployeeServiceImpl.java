@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.apache.commons.lang3.StringUtils.*;
+
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
     private final Map<String, Employee> employees = new HashMap<>();
@@ -56,28 +58,49 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee add(String firstName, String lastName, int department, double salary) {
-        Employee newEmployee = new Employee(firstName, lastName, department, salary);
+        if (!isAlpha(firstName) || !isAlpha(lastName)) {
+            throw new AddingAnExistingEmployeeException();
+        }
+        Employee newEmployee = new Employee(capitalize(firstName),
+                capitalize(lastName), department, salary);
+
         if (employees.containsKey(newEmployee.getFullName())) {
             throw new AddingAnExistingEmployeeException();
         }
-        return employees.put(newEmployee.getFullName(), newEmployee);
+
+        employees.put(newEmployee.getFullName(), newEmployee);
+        return newEmployee;
     }
 
     @Override
     public Employee remove(String fullName) {
-        Employee employee = employees.remove(fullName);
+        if (!isAlphaSpace(fullName)) {
+            throw new AddingAnExistingEmployeeException();
+        }
+
+        String fullNameCap = capitalize(split(fullName)[0]) + " " + capitalize(split(fullName)[1]);
+
+        Employee employee = employees.remove(fullNameCap);
         if (employee == null) {
             throw new EmployeeNotFoundException();
         }
+
         return employee;
     }
 
     @Override
     public Employee find(String fullName) {
-        Employee employee = employees.get(fullName);
+        if (!isAlphaSpace(fullName)) {
+            throw new AddingAnExistingEmployeeException();
+        }
+
+        String fullNameCap = capitalize(split(fullName)[0]) + " " + capitalize(split(fullName)[1]);
+
+        Employee employee = employees.get(fullNameCap);
         if (employee == null) {
             throw new EmployeeNotFoundException();
         }
+
         return employee;
     }
 }
