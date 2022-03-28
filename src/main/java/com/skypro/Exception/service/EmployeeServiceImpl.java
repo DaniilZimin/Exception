@@ -18,45 +18,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final Map<String, Employee> employees = new HashMap<>();
 
     @Override
-    public List<Employee> getAll() {
-        return employees.values().stream()
-                .sorted(Comparator.comparing(Employee::getDepartment))
-                .collect(Collectors.toList());
-    }
-
-    //Второй вариант
-    @Override
-    public Map<Integer, List<Employee>> getAllGroupedByDepartment() {
-        return employees.values().stream()
-                .collect(Collectors.groupingBy(Employee::getDepartment));
-    }
-
-    @Override
-    public List<Employee> getEmployeesByDepartment(int department) {
-        return getEmployeeStreamByDepartment(department)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Employee getMinSalaryEmployee(int department) {
-        return getEmployeeStreamByDepartment(department)
-                .min(Comparator.comparingDouble(Employee::getSalary))
-                .orElseThrow(EmployeeNotFoundException::new);
-    }
-
-    @Override
-    public Employee getMaxSalaryEmployee(int department) {
-        return getEmployeeStreamByDepartment(department)
-                .max(Comparator.comparingDouble(Employee::getSalary))
-                .orElseThrow(EmployeeNotFoundException::new);
-    }
-
-    private Stream<Employee> getEmployeeStreamByDepartment(int department) {
-        return employees.values().stream()
-                .filter(employee -> employee.getDepartment() == department);
-    }
-
-    @Override
     public Employee add(String firstName, String lastName, int department, double salary) {
         if (!isAlpha(firstName) || !isAlpha(lastName)) {
             throw new AddingAnExistingEmployeeException();
@@ -103,4 +64,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return employee;
     }
+
+    public Map<String, Employee> getEmployees() {
+        return employees;
+    }
+
 }

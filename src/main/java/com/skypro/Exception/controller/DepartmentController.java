@@ -1,5 +1,7 @@
 package com.skypro.Exception.controller;
 
+import com.skypro.Exception.service.DepartmentService;
+import com.skypro.Exception.service.DepartmentServiceImpl;
 import com.skypro.Exception.service.Employee;
 import com.skypro.Exception.service.EmployeeService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,32 +15,32 @@ import java.util.Map;
 @RestController
 @RequestMapping("/departments")
 public class DepartmentController {
-    private final EmployeeService employeeService;
+    private final DepartmentService departmentService;
 
-    public DepartmentController(EmployeeService employeeService) {
-        this.employeeService = employeeService;
+    public DepartmentController(DepartmentService departmentService) {
+        this.departmentService = departmentService;
     }
 
     @GetMapping("max-salary")
     public Employee getMaxSalaryEmployee(@RequestParam("departmentId") Integer department) {
-        return employeeService.getMaxSalaryEmployee(department);
+        return departmentService.getMaxSalaryEmployee(department);
     }
 
     @GetMapping("min-salary")
     public Employee getMinSalaryEmployee(@RequestParam("departmentId") Integer department) {
-        return employeeService.getMinSalaryEmployee(department);
+        return departmentService.getMinSalaryEmployee(department);
     }
 
     @GetMapping("all")
     public List<Employee> getEmployeesByDepartment(@RequestParam(value = "departmentId", required = false) Integer department) {
         if (department == null) {
-            return employeeService.getAll();
+            return departmentService.getAll();
         }
-        return employeeService.getEmployeesByDepartment(department);
+        return departmentService.getEmployeesByDepartment(department);
     }
 
     @GetMapping("all/grouped")
     public Map<Integer, List<Employee>> getAll() {
-        return employeeService.getAllGroupedByDepartment();
+        return departmentService.getAllGroupedByDepartment();
     }
 }

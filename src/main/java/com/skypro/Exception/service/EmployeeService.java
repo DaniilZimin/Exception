@@ -5,34 +5,6 @@ import java.util.Map;
 
 public interface EmployeeService {
     /**
-     * @return список сотрудников отсортированный по департаментам
-     */
-    List<Employee> getAll();
-
-    /**
-     * @return сгруппированный список по департаментам
-     */
-    Map<Integer, List<Employee>> getAllGroupedByDepartment();
-
-    /**
-     * @param department отдел
-     * @return список сотрудников отдела
-     */
-    List<Employee> getEmployeesByDepartment(int department);
-
-    /**
-     * @param department отдел
-     * @return сотрудник с минимальной зарплатой в отделе
-     */
-    Employee getMinSalaryEmployee(int department);
-
-    /**
-     * @param department отдел
-     * @return сотрудник с максимальной зарплатой в отделе
-     */
-    Employee getMaxSalaryEmployee(int department);
-
-    /**
      * @param firstName  имя
      * @param lastName   фамилия
      * @param department отдел
@@ -52,4 +24,6 @@ public interface EmployeeService {
      * @return найденный сотрудник
      */
     Employee find(String fullName);
+
+    Map<String, Employee> getEmployees();
 }
