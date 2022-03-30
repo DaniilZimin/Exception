@@ -75,15 +75,4 @@ public class EmployeeServiceImplTest {
         Employee employee = out.add("Иван", "Иванов", 1, 11111);
         Assertions.assertThrows(EmployeeNotFoundException.class, () -> out.find("Сергеев Сергей"));
     }
-
-
-    private static Stream<Employee> provideArgumentsForEmployeeTest() {
-        return Stream.of(new Employee("Иван1", "Иванов", 1, 11111),
-                new Employee("Иван2", "Иванов", 2, 22222),
-                new Employee("Иван3", "Иванов", 3, 33333),
-                new Employee("Иван4", "Иванов", 4, 44444),
-                new Employee("Иван5", "Иванов", 5, 55555)
-        );
-    }
-
 }

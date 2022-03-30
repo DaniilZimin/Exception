@@ -33,6 +33,4 @@ public class EmployeeController {
     public Employee find(@RequestParam("fullName") String fullName) {
         return employeeService.find(fullName);
     }
-
-
 }

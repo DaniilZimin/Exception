@@ -2,6 +2,7 @@ package com.skypro.Exception.service;
 
 import com.skypro.Exception.exception.AddingAnExistingEmployeeException;
 import com.skypro.Exception.exception.EmployeeNotFoundException;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -18,6 +19,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final Map<String, Employee> employees = new HashMap<>();
 
     @Override
+
     public Employee add(String firstName, String lastName, int department, double salary) {
         if (!isAlpha(firstName) || !isAlpha(lastName)) {
             throw new AddingAnExistingEmployeeException();
@@ -65,8 +67,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employee;
     }
 
+    @Override
     public Map<String, Employee> getEmployees() {
         return employees;
     }
-
 }
